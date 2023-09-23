@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Read the JSON file
-fs.readFile('jsTeacher.json', 'utf8', (err, data) => {
+fs.readFile('jsTeacher_sept23.json', 'utf8', (err, data) => {
     if (err) {
         console.error('Error reading JSON file:', err);
         return;
@@ -12,7 +12,7 @@ fs.readFile('jsTeacher.json', 'utf8', (err, data) => {
         const markdownContent = convertToMarkdown(conversation);
 
         // Write the markdown content to a file
-        fs.writeFile('conversation.md', markdownContent, 'utf8', (writeErr) => {
+        fs.writeFile('conversation_sept23.md', markdownContent, 'utf8', (writeErr) => {
             if (writeErr) {
                 console.error('Error writing markdown file:', writeErr);
                 return;
@@ -28,7 +28,7 @@ fs.readFile('jsTeacher.json', 'utf8', (err, data) => {
 function convertToMarkdown(conversation) {
     let markdownContent = '';
 
-    Object.values(conversation).forEach((message) => {
+    Object.values(conversation).forEach((message, index) => {
         const contentParts = message.message.content.parts;
         const content = contentParts.map(part => {
             if (part.startsWith('```')) {
@@ -40,7 +40,9 @@ function convertToMarkdown(conversation) {
         const role = message.message.author.role === 'user' ? 'Question' : 'Answer';
         const timestamp = new Date(message.message.create_time * 1000).toLocaleString();
 
-        markdownContent += `## ${role} - \n\n${content}\n\n`;
+        role === "Question" ? markdownContent += `## ${role} - ${content} \n\n` : markdownContent += `## ${role} \n\n${content}\n\n`;
+
+        // markdownContent += `## ${role} \n\n${content}\n\n`;
     });
 
     return markdownContent;
